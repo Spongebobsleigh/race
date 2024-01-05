@@ -35,5 +35,10 @@ public class PlayerController : MonoBehaviour
         {
             rigid.AddForce(transform.forward * movePower, ForceMode.Force);
         }
+
+        if (Input.GetKey(KeyCode.S) == true)
+        {
+            rigid.AddForce(-transform.forward * movePower, ForceMode.Force);
+        }
     }
 }
