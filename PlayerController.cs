@@ -8,6 +8,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float movePower = 20000f;
     // 横回転力.
     [SerializeField] float rotPower = 30000f;
+    // 速度制限.
+    [SerializeField] float speedSqrLimit = 200f;
+    // 回転速度制限.
+    [SerializeField] float rotationSqrLimit = 0.5f;
+
     // リジッドボディ.
     Rigidbody rigid = null;
 
@@ -34,10 +39,17 @@ public class PlayerController : MonoBehaviour
     // ------------------------------------------------------------
     void MoveUpdate()
     {
+        float sqrVel = rigid.velocity.sqrMagnitude;
+        // 前速度制限.
+        if (sqrVel > speedSqrLimit) return;
+
         if (Input.GetKey(KeyCode.Space) == true)
         {
             rigid.AddForce(transform.forward * movePower, ForceMode.Force);
         }
+
+        // 後速度制限.
+        if (sqrVel > (speedSqrLimit * 0.2f)) return;
 
         if (Input.GetKey(KeyCode.S) == true)
         {
@@ -52,6 +64,10 @@ public class PlayerController : MonoBehaviour
     // ------------------------------------------------------------
     void RotationUpdate()
     {
+        float sqrAng = rigid.angularVelocity.sqrMagnitude;
+        // 回転速度制限.
+        if (sqrAng > rotationSqrLimit) return;
+
         if (Input.GetKey(KeyCode.A) == true)
         {
             rigid.AddTorque(-transform.up * rotPower, ForceMode.Force);
