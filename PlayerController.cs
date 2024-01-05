@@ -12,6 +12,15 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float speedSqrLimit = 200f;
     // 回転速度制限.
     [SerializeField] float rotationSqrLimit = 0.5f;
+    // カメラの車追跡速度.
+    [SerializeField, Range(1f, 10f)] float cameraTrackingSpeed = 4f;
+    // カメラを向ける高さオフセット.
+    [SerializeField, Range(0, 5f)] float cameraLookHeightOffset = 4f;
+    // カメラ位置.
+    [SerializeField] Vector3 tpCameraOffset = new Vector3(0, 4f, -10f);
+
+    // カメラ.
+    [SerializeField] Camera tpCamera = null;
 
     // リジッドボディ.
     Rigidbody rigid = null;
@@ -30,6 +39,7 @@ public class PlayerController : MonoBehaviour
     {
         MoveUpdate();
         RotationUpdate();
+        TrackingCameraUpdate();
     }
 
     // ------------------------------------------------------------
@@ -77,5 +87,25 @@ public class PlayerController : MonoBehaviour
         {
             rigid.AddTorque(transform.up * rotPower, ForceMode.Force);
         }
+    }
+
+    // ------------------------------------------------------------
+    /// <summary>
+    /// カメラの車追跡.
+    /// </summary>
+    // ------------------------------------------------------------
+    void TrackingCameraUpdate()
+    {
+        // オフセット値を現在の角度で回転.
+        var rotOffset = this.transform.rotation * tpCameraOffset;
+        // 現在の位置の値に算出したオフセット値をプラスしてカメラの位置を算出.
+        var anchor = this.transform.position + rotOffset;
+        // カメラの位置を現在位置から徐々に変更.
+        tpCamera.gameObject.transform.position = Vector3.Lerp(tpCamera.gameObject.transform.position, anchor, Time.fixedDeltaTime * cameraTrackingSpeed);
+
+        // カメラを車の方向に向ける.
+        var look = this.transform.position;
+        look.y += cameraLookHeightOffset;
+        tpCamera.gameObject.transform.LookAt(look);
     }
 }
