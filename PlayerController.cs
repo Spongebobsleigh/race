@@ -30,6 +30,9 @@ public class PlayerController : MonoBehaviour
     // 逆走を判定するためのスイッチ.
     bool lapSwitch = false;
 
+    // プレイステート.
+    public GameController.PlayState CurrentState = GameController.PlayState.None;
+
     void Start()
     {
         if (rigid == null) rigid = GetComponent<Rigidbody>();
@@ -54,6 +57,8 @@ public class PlayerController : MonoBehaviour
     // ------------------------------------------------------------
     void MoveUpdate()
     {
+        if (CurrentState != GameController.PlayState.Play) return;
+
         float sqrVel = rigid.velocity.sqrMagnitude;
         // 前速度制限.
         if (sqrVel > speedSqrLimit) return;
@@ -79,6 +84,8 @@ public class PlayerController : MonoBehaviour
     // ------------------------------------------------------------
     void RotationUpdate()
     {
+        if (CurrentState != GameController.PlayState.Play) return;
+
         float sqrAng = rigid.angularVelocity.sqrMagnitude;
         // 回転速度制限.
         if (sqrAng > rotationSqrLimit) return;
