@@ -18,12 +18,17 @@ public class PlayerController : MonoBehaviour
     [SerializeField, Range(0, 5f)] float cameraLookHeightOffset = 4f;
     // カメラ位置.
     [SerializeField] Vector3 tpCameraOffset = new Vector3(0, 4f, -10f);
-
     // カメラ.
     [SerializeField] Camera tpCamera = null;
 
     // リジッドボディ.
     Rigidbody rigid = null;
+
+    // ラップ数.
+    public int LapCount = 0;
+
+    // 逆走を判定するためのスイッチ.
+    bool lapSwitch = false;
 
     void Start()
     {
@@ -107,5 +112,41 @@ public class PlayerController : MonoBehaviour
         var look = this.transform.position;
         look.y += cameraLookHeightOffset;
         tpCamera.gameObject.transform.LookAt(look);
+    }
+
+    // ------------------------------------------------------------
+    /// <summary>
+    /// 前方ゲートコール.
+    /// </summary>
+    // ------------------------------------------------------------
+    public void OnFrontGateCall()
+    {
+        // 通常のゲート通過.
+        if (lapSwitch == true)
+        {
+            LapCount++;
+            Debug.Log("Lap " + LapCount);
+            lapSwitch = false;
+        }
+        // 逆走ゲート通過.
+        else
+        {
+            LapCount--;
+            if (LapCount < 0) LapCount = 0;
+            Debug.Log("逆走 Lap " + LapCount);
+        }
+    }
+
+    // ------------------------------------------------------------
+    /// <summary>
+    /// 後方ゲートコール.
+    /// </summary>
+    // ------------------------------------------------------------
+    public void OnBackGateCall()
+    {
+        if (lapSwitch == false)
+        {
+            lapSwitch = true;
+        }
     }
 }
