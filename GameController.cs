@@ -32,10 +32,18 @@ public class GameController : MonoBehaviour
     float currentCountDown = 0;
     // ゲーム経過時間現在値.
     float timer = 0;
+    //プレイヤー.
+    [SerializeField] PlayerController player = null;
+    // ラップテキスト.
+    [SerializeField] Text lapText = null;
 
     void Start()
     {
         CountDownStart();
+        player.LapEvent.AddListener(OnLap);
+        player.GoalEvent.AddListener(OnGoal);
+        timerText.text = "Time : 000.0 s";
+        lapText.text = "Lap : 1/" + player.GoalLap;
     }
 
     void Update()
@@ -122,5 +130,31 @@ public class GameController : MonoBehaviour
     void SetPlayState(PlayState state)
     {
         CurrentState = state;
+        player.CurrentState = state;
+    }
+
+    // -------------------------------------------------------
+    /// <summary>
+    /// ラップ数変化時処理.
+    /// </summary>
+    // -------------------------------------------------------
+    void OnLap()
+    {
+        var current = player.LapCount;
+        var goalLap = player.GoalLap;
+
+        lapText.text = "Lap : " + current + "/" + goalLap;
+    }
+
+    // -------------------------------------------------------
+    /// <summary>
+    /// ゴール時処理.
+    /// </summary>
+    // -------------------------------------------------------
+    void OnGoal()
+    {
+        CurrentState = PlayState.Finish;
+        countdownText.text = "Goal";
+        countdownText.gameObject.SetActive(true);
     }
 }
