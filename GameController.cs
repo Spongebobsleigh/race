@@ -32,18 +32,25 @@ public class GameController : MonoBehaviour
     float currentCountDown = 0;
     // ゲーム経過時間現在値.
     float timer = 0;
-    //プレイヤー.
-    [SerializeField] PlayerController player = null;
+
     // ラップテキスト.
     [SerializeField] Text lapText = null;
+
+    //! プレイヤー.
+    [SerializeField] PlayerController player = null;
+
+    // リトライUI.
+    [SerializeField] GameObject retryUI = null;
 
     void Start()
     {
         CountDownStart();
         player.LapEvent.AddListener(OnLap);
         player.GoalEvent.AddListener(OnGoal);
+
         timerText.text = "Time : 000.0 s";
-        lapText.text = "Lap : 1/" + player.GoalLap;
+        lapText.text = "Lap : 0/" + player.GoalLap;
+        retryUI.SetActive(false);
     }
 
     void Update()
@@ -82,8 +89,9 @@ public class GameController : MonoBehaviour
         }
         else
         {
-            timer = 0;
-            timerText.text = "Time : 000.0 s";
+            // timer = 0;
+            // timerText.text = "Time : 000.0 s";
+            timerText.text = "Time : " + timer.ToString("000.0") + " s";
         }
     }
 
@@ -97,6 +105,7 @@ public class GameController : MonoBehaviour
         currentCountDown = (float)countStartTime;
         SetPlayState(PlayState.Ready);
         countdownText.gameObject.SetActive(true);
+        player.OnStart();
     }
 
     // -------------------------------------------------------
@@ -154,7 +163,23 @@ public class GameController : MonoBehaviour
     void OnGoal()
     {
         CurrentState = PlayState.Finish;
-        countdownText.text = "Goal";
+        countdownText.text = "Goal!!!";
         countdownText.gameObject.SetActive(true);
+        retryUI.SetActive(true);
+    }
+
+    // -------------------------------------------------------
+    /// <summary>
+    /// リトライボタンクリックコールバック.
+    /// </summary>
+    // -------------------------------------------------------
+    public void OnRetryButtonClicked()
+    {
+        retryUI.SetActive(false);
+        timerText.text = "Time : 000.0 s";
+        lapText.text = "Lap : 1/" + player.GoalLap;
+        player.OnRetry();
+
+        CountDownStart();
     }
 }
