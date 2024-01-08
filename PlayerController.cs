@@ -51,6 +51,11 @@ public class PlayerController : MonoBehaviour
     // ゴール時イベント,
     public UnityEvent GoalEvent = new UnityEvent();
 
+    // 開始時位置.
+    Vector3 startPosition = Vector3.zero;
+    // 開始時角度.
+    Quaternion startRotation = Quaternion.identity;
+
     void Start()
     {
         if (rigid == null) rigid = GetComponent<Rigidbody>();
@@ -217,5 +222,31 @@ public class PlayerController : MonoBehaviour
         mapCamera.position = current;
 
         mapCamera.forward = this.transform.forward;
+    }
+
+    // ------------------------------------------------------------
+    /// <summary>
+    /// カウントダウンスタート時コール.
+    /// </summary>
+    // ------------------------------------------------------------
+    public void OnStart()
+    {
+        startPosition = this.transform.position;
+        startRotation = this.transform.rotation;
+    }
+
+    // ------------------------------------------------------------
+    /// <summary>
+    /// リトライ時コール.
+    /// </summary>
+    // ------------------------------------------------------------
+    public void OnRetry()
+    {
+        this.transform.position = startPosition;
+        this.transform.rotation = startRotation;
+
+        var rotOffset = this.transform.rotation * tpCameraOffset;
+        var anchor = this.transform.position + rotOffset;
+        tpCamera.gameObject.transform.position = anchor;
     }
 }
