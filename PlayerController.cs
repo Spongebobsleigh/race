@@ -41,8 +41,8 @@ public class PlayerController : MonoBehaviour
     public int GoalLap = 2;
 
     // 逆走を判定するためのスイッチ.
-    bool lapSwitch = false;
-
+    // bool lapSwitch = false;
+    bool lapSwitch = true;
     // プレイステート.
     public GameController.PlayState CurrentState = GameController.PlayState.None;
 
@@ -88,7 +88,7 @@ public class PlayerController : MonoBehaviour
         // 前速度制限.
         if (sqrVel > speedSqrLimit) return;
 
-        if (Input.GetKey(KeyCode.Space) == true)
+        if (Input.GetKey(KeyCode.W) == true)
         {
             rigid.AddForce(transform.forward * movePower, ForceMode.Force);
         }
@@ -186,6 +186,11 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // ------------------------------------------------------------
+    /// <summary>
+    /// ゴール時処理.
+    /// </summary>
+    // ------------------------------------------------------------
     public void OnGoal()
     {
         LapCount = 0;
@@ -193,7 +198,7 @@ public class PlayerController : MonoBehaviour
         CurrentState = GameController.PlayState.Finish;
         GoalEvent?.Invoke();
     }
-
+   
     // ------------------------------------------------------------
     /// <summary>
     /// マップ用マーカーを車の上部に配置.
