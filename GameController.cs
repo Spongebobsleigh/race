@@ -49,7 +49,8 @@ public class GameController : MonoBehaviour
         player.GoalEvent.AddListener(OnGoal);
 
         timerText.text = "Time : 000.0 s";
-        lapText.text = "Lap : 0/" + player.GoalLap;
+        //lapText.text = "Lap : 1/" + player.GoalLap;
+        lapText.text = "Lap : " + (player.LapCount + 1) + "/" + player.GoalLap;
         retryUI.SetActive(false);
     }
 
@@ -87,6 +88,7 @@ public class GameController : MonoBehaviour
             timer += Time.deltaTime;
             timerText.text = "Time : " + timer.ToString("000.0") + " s";
         }
+        // ステートがfinishのとき.
         else
         {
             // timer = 0;
